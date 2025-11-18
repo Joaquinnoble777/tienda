@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tiendita - E‑commerce con Bootstrap</title>
+  <!-- Bootstrap 5 (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    /* Estilos mínimos adicionales */
+    body { padding-top: 70px; }
+    .product-card img { height: 180px; object-fit: cover; }
+    .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 1200; }
+    @media (min-width: 992px) { .offcanvas-lg { --bs-offcanvas-width: 420px; } }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">Tiendita</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="#productos">Productos</a></li>
+      </ul>
+      <div class="d-flex align-items-center">
+        <button class="btn btn-outline-light me-2" data-bs-toggle="offcanvas" data-bs-target="#cartCanvas">
+          <i class="bi bi-cart3"></i> <span id="cart-count" class="badge bg-light text-primary ms-1">0</span>
+        </button>
+        <a class="btn btn-light" href="#" id="btn-login">Login</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="py-5 bg-light">
+<div class="container">
+<div class="row align-items-center">
+<div class="col-md-6">
+<h1 class="display-6">Periféricos de Computación</h1>
+<p class="lead">La mejor selección de teclados, mouse, auriculares, micrófonos y accesorios gamer para potenciar tu setup.</p>
+<p class="small text-muted">Productos de alta calidad, precios competitivos y una experiencia de compra rápida y sencilla.</p>
+</div>
+<div class="col-md-6 text-center">
+<img src="https://ergo2play.com/cdn/shop/articles/M314_1080x.jpg?v=1633105598" alt="perifericos" class="img-fluid rounded shadow-sm">
+</div>
+</div>
+</div>
+</header>
+
+<!-- Productos -->
+<section id="productos" class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="h4">Nuestros Productos</h2>
+      <div>
+        <select id="filterCategory" class="form-select form-select-sm">
+          <option value="all">Todas las categorías</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="productsRow" class="row g-3">
+      <!-- Cards generadas por JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-4 bg-dark text-white">
+  <div class="container text-center small">© Tiendita • Demo • Personaliza a tu gusto</div>
+</footer>
+
+<!-- Offcanvas carrito -->
+<div class="offcanvas offcanvas-end offcanvas-lg" tabindex="-1" id="cartCanvas">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Tu carrito</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <div id="cart-items" class="mb-3"></div>
+    <div class="mt-auto">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <strong>Total:</strong>
+        <h5 id="cart-total" class="m-0">$0.00</h5>
+      </div>
+      <div class="d-grid gap-2">
+        <button id="btn-checkout" class="btn btn-primary">Pagar (WhatsApp)</button>
+        <button id="btn-clear" class="btn btn-outline-secondary">Vaciar carrito</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal producto -->
+<div class="modal fade" id="productModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="modalTitle" class="modal-title"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6"><img id="modalImage" class="img-fluid rounded"></div>
+          <div class="col-md-6">
+            <h5 id="modalPrice"></h5>
+            <p id="modalDesc"></p>
+            <div class="input-group mb-3" style="max-width:160px;">
+              <span class="input-group-text">Cantidad</span>
+              <input id="modalQty" type="number" class="form-control" value="1" min="1">
+            </div>
+            <button id="modalAdd" class="btn btn-primary">Agregar al carrito</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="bg-dark text-light pt-5 pb-3 mt-5">
+  <div class="container">
+
+    <div class="row">
+
+      <!-- LOGO / INFO -->
+      <div class="col-md-4 mb-4">
+        <h4 class="fw-bold">Tiendita</h4>
+        <p class="text-muted">
+          Tu e-commerce moderno, rápido y confiable.  
+          Productos de calidad y soporte personalizado.
+        </p>
+      </div>
+
+      <!-- ENLACES -->
+      <div class="col-md-4 mb-4">
+        <h5 class="fw-semibold mb-3">Enlaces rápidos</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <a href="#" class="text-light text-decoration-none">
+              <i class="bi bi-chevron-right"></i> Inicio
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="#productos" class="text-light text-decoration-none">
+              <i class="bi bi-chevron-right"></i> Productos
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="#" class="text-light text-decoration-none">
+              <i class="bi bi-chevron-right"></i> Carrito
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="#" class="text-light text-decoration-none">
+              <i class="bi bi-chevron-right"></i> Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CONTACTO -->
+      <div class="col-md-4 mb-4">
+        <h5 class="fw-semibold mb-3">Contacto</h5>
+
+        <p class="mb-2">
+          <i class="bi bi-telephone-fill me-2"></i>
+          <a href="https://wa.me/59899946914" target="_blank" class="text-light text-decoration-none">
+      099 946 914
+          </a>
+        </p>
+
+        <p class="mb-2">
+          <i class="bi bi-envelope-fill me-2"></i>
+          contacto@tiendita.com
+        </p>
+
+        <p class="mb-2">
+          <i class="bi bi-geo-alt-fill me-2"></i>
+          Montevideo, Uruguay
+        </p>
+
+        <!-- Redes sociales -->
+        <div class="mt-3">
+          <a href="#" class="text-light me-3 fs-4"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="text-light me-3 fs-4"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="text-light me-3 fs-4"><i class="bi bi-whatsapp"></i></a>
+          <a href="#" class="text-light fs-4"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="border-secondary">
+
+    <div class="text-center text-muted">
+      © 2025 Tiendita — Todos los derechos reservados.
+    </div>
+
+  </div>
+</footer>
+
+
+
+<!-- Toasts -->
+<div class="toast-container">
+    
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// ---------------------
+// Datos de ejemplo (reemplaza por tu API en producción)
+// ---------------------
+const PRODUCTS = [
+  { id: 'p1', title: 'Auriculares Pro', price: 650, category: 'Audio', img: 'img/auriculares.png', desc: 'Auriculares cómodos con buena cancelación.' },
+  { id: 'p2', title: 'Mouse Gamer', price: 580, category: 'Periféricos', img: 'img/mouse.png', desc: 'Mouse con DPI ajustable para gaming.' },
+  { id: 'p3', title: 'Teclado Mecánico', price: 2400, category: 'Periféricos', img: 'img/teclado.png', desc: 'Teclado mecánico con switches azules.' },
+  { id: 'p4', title: 'Mochila Urbana', price: 45.00, category: 'Accesorios', img: 'img/mochila.png', desc: 'Mochila resistente y con compartimento para laptop.' },
+  { id: 'p5', title: 'Cargador Rápido', price: 690, category: 'Accesorios', img: 'img/cargador.png', desc: 'Carga rápida USB-C 30W.' },
+  { id: 'p6', title: 'Smartwatch Fit', price: 2800, category: 'Tecnología', img: 'img/reloj.png', desc: 'Reloj inteligente con monitoreo de ritmo cardíaco y notificaciones.' },
+  { id: 'p7', title: 'Parlante Bluetooth', price: 2500, category: 'Audio', img: 'img/parlante.png', desc: 'Parlante portátil con excelente sonido y batería de larga duración.' },
+  { id: 'p8', title: 'Webcam HD 1080p', price: 1200, category: 'Periféricos', img: 'img/webcam.png', desc: 'Cámara web ideal para videollamadas y streaming.' },
+  { id: 'p9', title: 'Silla Gamer Pro', price: 8500, category: 'Muebles', img: 'img/silla.png', desc: 'Silla ergonómica con soporte lumbar para largas sesiones.' },
+  { id: 'p10', title: 'Cargador Portatil Power Bank Roca 20000 Mah', price: 1600, category: 'Accesorios', img: 'img/cargador portatil.png', desc: 'Banco de energía de alta capacidad para cargar múltiples dispositivos.' }
+];
+
+// ---------------------
+// Utilidades de carrito (usa localStorage para persistencia)
+// ---------------------
+const CART_KEY = 'tiendita_cart_v1';
+function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+function loadCart() { try { return JSON.parse(localStorage.getItem(CART_KEY)) || {}; } catch(e){ return {}; } }
+
+// ---------------------
+// Render productos
+// ---------------------
+const productsRow = document.getElementById('productsRow');
+const filterCategory = document.getElementById('filterCategory');
+
+function populateCategories(){
+  const cats = ['all', ...new Set(PRODUCTS.map(p=>p.category))];
+  filterCategory.innerHTML = cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+
+function renderProducts(category='all'){
+  const list = PRODUCTS.filter(p => category==='all' ? true : p.category===category);
+  productsRow.innerHTML = list.map(p=>`
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="card product-card h-100">
+        <img src="${p.img}" class="card-img-top" alt="${p.title}">
+        <div class="card-body d-flex flex-column">
+          <h6 class="card-title">${p.title}</h6>
+          <p class="card-text small text-muted mb-2">${p.category}</p>
+          <p class="mt-auto d-flex justify-content-between align-items-center">
+            <strong>$${p.price.toFixed(2)}</strong>
+            <div>
+              <button class="btn btn-sm btn-outline-primary me-1" data-id="${p.id}" data-action="view">Ver</button>
+              <button class="btn btn-sm btn-primary" data-id="${p.id}" data-action="add">+ Añadir</button>
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Delegación de eventos en productos
+productsRow.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const id = btn.dataset.id;
+  const action = btn.dataset.action;
+  const product = PRODUCTS.find(p=>p.id===id);
+  if(action==='view') openProductModal(product);
+  if(action==='add') addToCart(product.id, 1) && showToast(`${product.title} agregado al carrito`);
+});
+
+// Filtrado
+filterCategory.addEventListener('change', ()=> renderProducts(filterCategory.value));
+
+// ---------------------
+// Modal producto
+// ---------------------
+const productModalEl = document.getElementById('productModal');
+const productModal = new bootstrap.Modal(productModalEl);
+function openProductModal(product){
+  document.getElementById('modalTitle').textContent = product.title;
+  document.getElementById('modalImage').src = product.img;
+  document.getElementById('modalDesc').textContent = product.desc;
+  document.getElementById('modalPrice').textContent = `$${product.price.toFixed(2)}`;
+  document.getElementById('modalQty').value = 1;
+  document.getElementById('modalAdd').dataset.id = product.id;
+  productModal.show();
+}
+
+document.getElementById('modalAdd').addEventListener('click', (e)=>{
+  const id = e.target.dataset.id;
+  const qty = parseInt(document.getElementById('modalQty').value) || 1;
+  addToCart(id, qty);
+  productModal.hide();
+  showToast('Producto agregado');
+});
+
+// ---------------------
+// Carrito: añadir, render, eliminar
+// ---------------------
+function getCart(){ return loadCart(); }
+function setCart(cart){ saveCart(cart); renderCart(); updateCartCount(); }
+
+function addToCart(id, qty=1){
+  const cart = getCart();
+  cart[id] = (cart[id] || 0) + qty;
+  setCart(cart);
+}
+
+function removeFromCart(id){
+  const cart = getCart();
+  delete cart[id];
+  setCart(cart);
+}
+
+function clearCart(){ setCart({}); }
+
+function renderCart(){
+  const container = document.getElementById('cart-items');
+  const cart = getCart();
+  const ids = Object.keys(cart);
+  if(ids.length===0){ container.innerHTML = '<p class="text-muted">El carrito está vacío.</p>'; document.getElementById('cart-total').textContent = '$0.00'; return; }
+  let total = 0;
+  container.innerHTML = ids.map(id=>{
+    const p = PRODUCTS.find(x=>x.id===id);
+    const qty = cart[id];
+    const sub = p.price * qty; total += sub;
+    return `
+      <div class="d-flex align-items-center border-bottom py-2">
+        <img src="${p.img}" style="width:64px;height:48px;object-fit:cover;" class="me-2 rounded">
+        <div class="flex-grow-1">
+          <div class="small">${p.title}</div>
+          <div class="text-muted small">$${p.price.toFixed(2)} x ${qty} = $${sub.toFixed(2)}</div>
+        </div>
+        <div class="ms-2">
+          <button class="btn btn-sm btn-outline-secondary me-1" data-id="${id}" data-action="dec">−</button>
+          <button class="btn btn-sm btn-outline-secondary" data-id="${id}" data-action="inc">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`;
+}
+
+// Delegación en canvas
+document.getElementById('cart-items').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  const id = btn.dataset.id; const action = btn.dataset.action;
+  const cart = getCart();
+  if(action==='dec'){ cart[id] = Math.max(0, (cart[id]||0)-1); if(cart[id]===0) delete cart[id]; setCart(cart); }
+  if(action==='inc'){ cart[id] = (cart[id]||0)+1; setCart(cart); }
+});
+
+// Botones del canvas
+document.getElementById('btn-clear').addEventListener('click', ()=>{ clearCart(); showToast('Carrito vaciado'); });
+
+// Checkout: ejemplo que abre WhatsApp con resumen
+const WHATSAPP_NUMBER = '5491123456789'; // <- reemplaza por tu número (formato internacional sin +)
+document.getElementById('btn-checkout').addEventListener('click', ()=>{
+  const cart = getCart(); if(Object.keys(cart).length===0){ showToast('El carrito está vacío'); return; }
+  const lines = ['*Nuevo pedido desde Tiendita*'];
+  let total=0;
+  for(const id of Object.keys(cart)){
+    const p = PRODUCTS.find(x=>x.id===id);
+    const q = cart[id]; const sub = p.price*q; total+=sub;
+    lines.push(`${q} x ${p.title} - $${sub.toFixed(2)}`);
+  }
+  lines.push(`*Total:* $${total.toFixed(2)}`);
+  const text = encodeURIComponent(lines.join('\n'));
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+  window.open(url, '_blank');
+});
+
+// ---------------------
+// Helpers: contador y toasts
+// ---------------------
+function updateCartCount(){
+  const cart = getCart();
+  const count = Object.values(cart).reduce((s,n)=>s+n,0);
+  document.getElementById('cart-count').textContent = count;
+}
+
+function showToast(message){
+  const container = document.querySelector('.toast-container');
+  const id = 't'+Date.now();
+  const toastEl = document.createElement('div');
+  toastEl.className = 'toast align-items-center text-bg-primary border-0';
+  toastEl.role = 'alert'; toastEl.ariaLive = 'assertive'; toastEl.ariaAtomic = 'true';
+  toastEl.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">${message}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  `;
+  container.appendChild(toastEl);
+  const bsToast = new bootstrap.Toast(toastEl, { delay: 2500 });
+  bsToast.show();
+  toastEl.addEventListener('hidden.bs.toast', ()=> toastEl.remove());
+}
+
+// Inicialización
+(function init(){
+  populateCategories(); renderProducts(); renderCart(); updateCartCount();
+})();
+
+</script>
+
+</body>
+</html>
