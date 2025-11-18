@@ -54,7 +54,7 @@
 <div class="col-md-6">
 <h1 class="display-6">Periféricos de Computación</h1>
 <p class="lead">La mejor selección de teclados, mouse, auriculares, micrófonos y accesorios gamer para potenciar tu setup.</p>
-<p class="small text-muted">Productos de alta calidad, precios competitivos y una experiencia de compra rápida y sencilla.</p>
+<p class="smtodos text-muted">Productos de alta calidad, precios competitivos y una experiencia de compra rápida y sencilla.</p>
 </div>
 <div class="col-md-6 text-center">
 <img src="https://ergo2play.com/cdn/shop/articles/M314_1080x.jpg?v=1633105598" alt="perifericos" class="img-fluid rounded shadow-sm">
@@ -70,7 +70,7 @@
       <h2 class="h4">Nuestros Productos</h2>
       <div>
         <select id="filterCategory" class="form-select form-select-sm">
-          <option value="all">Todas las categorías</option>
+          <option value="todos">Todas las categorías</option>
         </select>
       </div>
     </div>
@@ -249,19 +249,19 @@ const productsRow = document.getElementById('productsRow');
 const filterCategory = document.getElementById('filterCategory');
 
 function populateCategories(){
-  const cats = ['all', ...new Set(PRODUCTS.map(p=>p.category))];
+  const cats = ['todos', ...new Set(PRODUCTS.map(p=>p.category))];
   filterCategory.innerHTML = cats.map(c=>`<option value="${c}">${c}</option>`).join('');
 }
 
-function renderProducts(category='all'){
-  const list = PRODUCTS.filter(p => category==='all' ? true : p.category===category);
+function renderProducts(category='todos'){
+  const list = PRODUCTS.filter(p => category==='todos' ? true : p.category===category);
   productsRow.innerHTML = list.map(p=>`
     <div class="col-6 col-md-4 col-lg-3">
       <div class="card product-card h-100">
         <img src="${p.img}" class="card-img-top" alt="${p.title}">
         <div class="card-body d-flex flex-column">
           <h6 class="card-title">${p.title}</h6>
-          <p class="card-text small text-muted mb-2">${p.category}</p>
+          <p class="card-text smtodos text-muted mb-2">${p.category}</p>
           <p class="mt-auto d-flex justify-content-between align-items-center">
             <strong>$${p.price.toFixed(2)}</strong>
             <div>
@@ -346,8 +346,8 @@ function renderCart(){
       <div class="d-flex align-items-center border-bottom py-2">
         <img src="${p.img}" style="width:64px;height:48px;object-fit:cover;" class="me-2 rounded">
         <div class="flex-grow-1">
-          <div class="small">${p.title}</div>
-          <div class="text-muted small">$${p.price.toFixed(2)} x ${qty} = $${sub.toFixed(2)}</div>
+          <div class="smtodos">${p.title}</div>
+          <div class="text-muted smtodos">$${p.price.toFixed(2)} x ${qty} = $${sub.toFixed(2)}</div>
         </div>
         <div class="ms-2">
           <button class="btn btn-sm btn-outline-secondary me-1" data-id="${id}" data-action="dec">−</button>
